@@ -1,0 +1,33 @@
+{
+  "name": "automatic-backup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UP940148/up940148-automatic-backup.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UP940148/up940148-automatic-backup/issues"
+  },
+  "homepage": "https://github.com/UP940148/up940148-automatic-backup#readme",
+  "devDependencies": {
+    "eslint": "^7.23.0",
+    "eslint-config-portsoc": "^0.8.1"
+  },
+  "eslintConfig": {
+    "extends": "portsoc",
+    "root": true,
+    "env": {
+      "browser": true
+    }
+  },
+  "dependencies": {
+    "google-auth-library": "^7.11.0"
+  }
+}
