@@ -1,42 +1,69 @@
 # up940148-automatic-backup
 
-This repository contains the system necessary to automate the backup of your datastore.
+This repository contains the system necessary to automate the backup of your Google Cloud datastore.
 
-## Installation
+This system is designed to be deployed into a Google Cloud project.
 
-To install this into a VM instance, first install Node and Git, then clone this repository.
+## Setup
+
+### Installing Git
+
+First ensure that Git is installed on the system you're using, you can check this by running:
 
 ```sh
-# Install Node and Git
-curl -fsSL https://deb.nodesource.com/setup_17.x | sudo bash -
-sudo apt-get install -y nodejs
-sudo apt-get install -y git
+git --version
+```
 
+If Git isn't installed, you should install it using:
+
+```sh
+sudo apt-get install -y git
+```
+
+### Getting repository
+
+Once you've got Git installed, clone the contents of this repository into your project.
+
+```sh
 # Clone repository
 git clone https://github.com/UP940148/up940148-automatic-backup
 cd up940148-automatic-backup
-
-# Install Repository Dependencies
-npm install
 ```
 
 ## Deployment
 
-Deploy the cloud function using
+Deploy the cloud function using:
 
 ```sh
-gcloud functions deploy runBackup --runtime nodejs12 --trigger-http --allow-unauthenticated --service-account datastore-backup@sse2021-332216.iam.gserviceaccount.com
+gcloud functions deploy runBackup --runtime nodejs12 --trigger-http --allow-unauthenticated --service-account *SERVICE_ACCOUNT_EMAIL*
 ```
 
-Then create the scheduled job using
+Where `*SERVICE_ACCOUNT_EMAIL*` is the unique email address generated for the service account you're using to deploy the function.
+
+Once the cloud function has been deployed, the console will give you a url to trigger the backup function. This will be under `httpsTrigger: -> url:`. Because this cloud function is triggered with the http `GET` method, navigating to this url in your browser will manually trigger the backup.
+
+To schedule the backup to run automatically, you need to set up a cloud scheduled job using the following.
 
 ```sh
-gcloud scheduler jobs create http scheduled-backup --schedule "* * * * *" --uri *FUNCTION_URI* --http-method GET
+gcloud scheduler jobs create http *JOB_NAME* --schedule "* * * * *" --uri *UNIQUE_URL* --http-method GET
 ```
 
-To later delete the cloud function and scheduled job, run
+Where `*JOB_NAME*` is a name you want to use to identify this specific job (Must be unique).
+
+And `*UNIQUE_URL*` is the unique url of your cloud function.
+
+This job is scheduled to run every minute, to change this schedule, simply replace the `* * * * *` with any Cron time string.
+
+## Removal
+
+To delete the scheduled job, run
+
+```sh
+gcloud scheduler jobs delete *JOB_NAME*
+```
+
+To delete the cloud function, run
 
 ```sh
 gcloud functions delete runBackup
-gcloud scheduler jobs delete scheduled-backup
 ```
